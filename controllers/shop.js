@@ -5,41 +5,59 @@ const Cart = require('../models/cart');
 exports.getProducts = (req, res, next) => {
     // console.log(adminData.products);//show our list of products
     // res.sendFile(path.join(rootDir, 'views', 'shop.html')); //this is for html file
-    Product.fetchAll(products => {
-        res.render('shop/product-list', {
-            prods: products,
-            pageTitle: 'All Products',
-            path: '/products',
-            hasProducts: products.length > 0, //this is for rendering pug file
-            activeShop: true,
-            productCSS: true,
-            //layout: false  //special key
-        });
-    });
+    Product.fetchAll()
+        .then(([rows, fieldData]) => {
+            res.render('shop/product-list', {
+                prods: rows,
+                pageTitle: 'All Products',
+                path: '/products',
+                // hasProducts: rows.length > 0, //this is for rendering pug file
+                // activeShop: true,
+                // productCSS: true,
+                //layout: false  //special key
+            });
+        })
+        .catch(
+            err => console.log(err)
+        );
 };
 
 exports.getProduct = (req, res, next) => {
     const prodId = req.params.productId;
-    Product.findById(prodId, product => {
-        res.render('shop/product-detail', { product: product, pageTitle: product.title, path: '/products' });
-    });
+    Product.findById(prodId)
+        .then(([product]) => {
+            res.render('shop/product-detail', {
+                product: product[0],
+                pageTitle: product.title,
+                path: '/products'
+            });
+        })
+        .catch(
+            err => console.log(err)
+        );
+
 };
 
 exports.getIndex = (req, res, next) => {
-    Product.fetchAll(products => {
-        res.render('shop/index', {
-            prods: products,
-            pageTitle: 'Shop',
-            path: '/',
-            // hasProducts: products.length > 0, //this is for rendering pug file
-            // activeShop: true,
-            // productCSS: true,
-            // //layout: false  //special key
-        });
-    });
+    Product.fetchAll()
+        .then(([rows, fieldData]) => {
+            res.render('shop/index', {
+                prods: rows, //rows - our products
+                pageTitle: 'Shop',
+                path: '/',
+                // hasProducts: products.length > 0, //this is for rendering pug file
+                // activeShop: true,
+                // productCSS: true,
+                // //layout: false  //special key
+            });
+        })
+        .catch(
+            err => console.log(err)
+        );
 };
 
 exports.getCart = (req, res, next) => {
+    // Cart.getProducts(cart => {
     Cart.getProducts(cart => {
         const cartProducts = [];
         Product.fetchAll(products => {

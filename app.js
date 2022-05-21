@@ -2,7 +2,10 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const errorController = require('./controllers/error');
 // const expressHbs = require('express-handlebars');
+
+// const db = require('./util/database');
 
 const app = express();
 
@@ -21,8 +24,15 @@ app.set('views', 'views');// fist views is name of folder
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
-const errorController = require('./controllers/error');
 
+//TEST CODE FOR MYSQL
+// db.execute('SELECT * FROM products')
+// .then(result => {
+//     console.log(result);
+// })
+// .catch(err => {
+//     console.log(err);
+// });
 
 app.use(bodyParser.urlencoded({ extended: false }));//parse only from forms
 app.use(express.static(path.join(__dirname, 'public'))); //helps us for generate css

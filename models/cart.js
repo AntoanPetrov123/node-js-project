@@ -1,6 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
+const db = require('../util/database');
+
+
 const p = path.join(path.dirname(process.mainModule.filename), 'data', 'cart.json');
 
 module.exports = class Cart {
@@ -52,15 +55,15 @@ module.exports = class Cart {
         });
     }
 
-    static getProducts(callback) {
-        fs.readFile(p, (err, fileContent) => {
-            const cart = JSON.parse(fileContent);
-            if (err) {
-                callback(null);
-            } else {
-                callback(cart);
-            }
-        });
-
+    static getProducts() {
+        // fs.readFile(p, (err, fileContent) => {
+        //     const cart = JSON.parse(fileContent);
+        //     if (err) {
+        //         callback(null);
+        //     } else {
+        //         callback(cart);
+        //     }
+        // });
+        return db.execute('SELECT * FROM products');
     }
 };

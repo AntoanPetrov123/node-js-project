@@ -5,16 +5,12 @@ const Cart = require('../models/cart');
 exports.getProducts = (req, res, next) => {
     // console.log(adminData.products);//show our list of products
     // res.sendFile(path.join(rootDir, 'views', 'shop.html')); //this is for html file
-    Product.fetchAll()
-        .then(([rows, fieldData]) => {
+    Product.findAll()
+        .then(products => {
             res.render('shop/product-list', {
-                prods: rows,
+                prods: products,
                 pageTitle: 'All Products',
-                path: '/products',
-                // hasProducts: rows.length > 0, //this is for rendering pug file
-                // activeShop: true,
-                // productCSS: true,
-                //layout: false  //special key
+                path: '/products'
             });
         })
         .catch(
@@ -24,31 +20,25 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
     const prodId = req.params.productId;
-    Product.findById(prodId)
-        .then(([product]) => {
+    Product.findByPk(prodId)
+        .then(product => {
             res.render('shop/product-detail', {
-                product: product[0],
+                product: product,
                 pageTitle: product.title,
                 path: '/products'
             });
         })
-        .catch(
-            err => console.log(err)
-        );
+        .catch(err => console.log(err));
 
 };
 
 exports.getIndex = (req, res, next) => {
-    Product.fetchAll()
-        .then(([rows, fieldData]) => {
+    Product.findAll()
+        .then(products => {
             res.render('shop/index', {
-                prods: rows, //rows - our products
+                prods: products, //our products
                 pageTitle: 'Shop',
                 path: '/',
-                // hasProducts: products.length > 0, //this is for rendering pug file
-                // activeShop: true,
-                // productCSS: true,
-                // //layout: false  //special key
             });
         })
         .catch(
@@ -78,7 +68,7 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId;
-    Product.findById(prodId, (product) => {
+    Product.findByPk(prodId, (product) => {
         Cart.addProduct(prodId, product.price);
     });
     res.redirect('/cart');
@@ -86,7 +76,7 @@ exports.postCart = (req, res, next) => {
 
 exports.postCartDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
-    Product.findById(prodId, product => {
+    Product.findByPk(prodId, product => {
         Cart.deleteProduct(prodId, product.price);
         res.redirect('/cart');
     });
@@ -105,4 +95,3 @@ exports.getCheckout = (req, res, next) => {
         pageTitle: 'Checkout'
     });
 };
-

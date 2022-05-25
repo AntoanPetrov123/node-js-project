@@ -4,14 +4,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const errorController = require('./controllers/error');
 // const expressHbs = require('express-handlebars');
+const mongoConnect = require('./util/database').mongoConnect;
 
-const sequelize = require('./util/database');
-const Product = require('./models/product');
-const User = require('./models/user');
-const Cart = require('./models/cart');
-const CartItem = require('./models/cart-item');
-const Order = require('./models/order');
-const OrderItem = require('./models/order-items');
+
+//SEQUEL
+// const sequelize = require('./util/database');
+// const Product = require('./models/product');
+// const User = require('./models/user');
+// const Cart = require('./models/cart');
+// const CartItem = require('./models/cart-item');
+// const Order = require('./models/order');
+// const OrderItem = require('./models/order-items');
 
 
 
@@ -46,14 +49,16 @@ app.use(bodyParser.urlencoded({ extended: false })); //parse only from forms
 app.use(express.static(path.join(__dirname, 'public'))); //helps us for generate css
 
 app.use((req, res, next) => {
-    User.findByPk(1)
-        .then(user => {
-            req.user = user;
-            next();
-        })
-        .catch(err => {
-            console.log(err);
-        });
+    //SEQUEL
+    // User.findByPk(1)
+    //     .then(user => {
+    //         req.user = user;
+    //         next();
+    //     })
+    //     .catch(err => {
+    //         console.log(err);
+    //     });
+    next();
 });
 
 //ROUTES
@@ -61,46 +66,52 @@ app.use('/admin', adminRoutes); //this is from export in admins.js
 app.use(shopRoutes);
 app.use(errorController.get404);
 
+//SEQUEL
+
 //relations user and products and cart
-Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
-User.hasMany(Product);
-User.hasOne(Cart);
-Cart.belongsTo(User);
-Cart.belongsToMany(Product, { through: CartItem });
-Product.belongsToMany(Cart, { through: CartItem });
-Order.belongsTo(User);
-User.hasMany(Order);
-Order.belongsToMany(Product, { through: OrderItem });
+// Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+// User.hasMany(Product);
+// User.hasOne(Cart);
+// Cart.belongsTo(User);
+// Cart.belongsToMany(Product, { through: CartItem });
+// Product.belongsToMany(Cart, { through: CartItem });
+// Order.belongsTo(User);
+// User.hasMany(Order);
+// Order.belongsToMany(Product, { through: OrderItem });
 
 
-sequelize
-// .sync({ force: true }) //override our table(optional)
-    .sync()
-    .then(
-        result => {
-            return User.findByPk(1);
-        }
-    )
-    .then(user => {
-        if (!user) {
-            return User.create({ name: 'Antoan', email: 'test@test.com' }); //create a basic user
-        }
+// sequelize
+// // .sync({ force: true }) //override our table(optional)
+//     .sync()
+//     .then(
+//         result => {
+//             return User.findByPk(1);
+//         }
+//     )
+//     .then(user => {
+//         if (!user) {
+//             return User.create({ name: 'Antoan', email: 'test@test.com' }); //create a basic user
+//         }
 
-        return Promise.resolve(user);
-    })
-    .then(user => {
-        // console.log(user);
-        user.createCart(); //create basic cart to a user
-    })
-    .then(cart => {
-        app.listen(3000);
+//         return Promise.resolve(user);
+//     })
+//     .then(user => {
+//         // console.log(user);
+//         user.createCart(); //create basic cart to a user
+//     })
+//     .then(cart => {
+//         app.listen(3000);
 
-    })
-    .catch(err => {
-        console.log(err);
-    })
+//     })
+//     .catch(err => {
+//         console.log(err);
+//     })
 
 
 // const server = http.createServer(app);
 // server.listen(3000);
 //CONNECT TO LOCALHOST
+
+mongoConnect(() => {
+    app.listen(3000);
+});

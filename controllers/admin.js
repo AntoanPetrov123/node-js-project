@@ -81,8 +81,20 @@ exports.postEditProduct = (req, res, next) => {
     const product = new Product(updatedTitle, updatedPrice, updatedDescription, updatedImageUrl, prodId);
     product
         .save()
-        .then(result => {
+        .then(() => {
             console.log('UPDATED PRODUCT!');
+            res.redirect('/admin/products');
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
+
+exports.postDeleteProduct = (req, res, next) => {
+    const prodId = req.body.productId;
+    Product.deleteById(prodId)
+        .then(result => {
+            console.log('DESTROYED PRODUCT');
             res.redirect('/admin/products');
         })
         .catch(err => {

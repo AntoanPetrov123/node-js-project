@@ -2,12 +2,13 @@ const getDb = require('../util/database').getDb;
 const mongodb = require('mongodb');
 
 class Product {
-    constructor(title, price, description, imageUrl, id) {
+    constructor(title, price, description, imageUrl, id, userId) {
         this.title = title;
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
-        this._id = id ? new mongodb.ObjectId(id) : null; //if we pass id to a function
+        this._id = id ? new mongodb.ObjectId(id) : null; //if we dont pass id to a function set to null, because new mongodb.ObjectId(id) creates valid value for if check
+        this.userId = userId;
     }
 
     //connect to mongodb and save new product or edit them

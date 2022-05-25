@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const errorController = require('./controllers/error');
 // const expressHbs = require('express-handlebars');
 const mongoConnect = require('./util/database').mongoConnect;
+const User = require('./models/user');
 
 
 //SEQUEL
@@ -49,16 +50,14 @@ app.use(bodyParser.urlencoded({ extended: false })); //parse only from forms
 app.use(express.static(path.join(__dirname, 'public'))); //helps us for generate css
 
 app.use((req, res, next) => {
-    //SEQUEL
-    // User.findByPk(1)
-    //     .then(user => {
-    //         req.user = user;
-    //         next();
-    //     })
-    //     .catch(err => {
-    //         console.log(err);
-    //     });
-    next();
+    User.findById("628e0d09b1bc84495c31b956")
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(err => {
+            console.log(err);
+        });
 });
 
 //ROUTES

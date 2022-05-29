@@ -3,9 +3,10 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const errorController = require('./controllers/error');
+const mongoose = require('mongoose');
 // const expressHbs = require('express-handlebars');
-const mongoConnect = require('./util/database').mongoConnect;
-const User = require('./models/user');
+// const mongoConnect = require('./util/database').mongoConnect;
+// const User = require('./models/user');
 
 
 //SEQUEL
@@ -49,16 +50,16 @@ const shopRoutes = require('./routes/shop');
 app.use(bodyParser.urlencoded({ extended: false })); //parse only from forms
 app.use(express.static(path.join(__dirname, 'public'))); //helps us for generate css
 
-app.use((req, res, next) => {
-    User.findById("628e67f6b1bc84495c31b974")
-        .then(user => {
-            req.user = new User(user.name, user.email, user.cart, user._id);
-            next();
-        })
-        .catch(err => {
-            console.log(err);
-        });
-});
+// app.use((req, res, next) => {
+//     User.findById("628e67f6b1bc84495c31b974")
+//         .then(user => {
+//             req.user = new User(user.name, user.email, user.cart, user._id);
+//             next();
+//         })
+//         .catch(err => {
+//             console.log(err);
+//         });
+// });
 
 //ROUTES
 app.use('/admin', adminRoutes); //this is from export in admins.js
@@ -111,6 +112,14 @@ app.use(errorController.get404);
 // server.listen(3000);
 //CONNECT TO LOCALHOST
 
-mongoConnect(() => {
-    app.listen(3000);
-});
+// mongoConnect(() => {
+//     app.listen(3000);
+// });
+
+mongoose.connect('mongodb+srv://antoanpetrov1:antoanpetrov1@cluster0.sxj1res.mongodb.net/shop?retryWrites=true&w=majority')
+    .then(result => {
+        app.listen(3000);
+    })
+    .catch(err => {
+        console.log(err);
+    });

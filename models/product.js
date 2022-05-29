@@ -1,73 +1,103 @@
-const getDb = require('../util/database').getDb;
-const mongodb = require('mongodb');
+const mongoose = require('mongoose');
 
-class Product {
-    constructor(title, price, description, imageUrl, id, userId) {
-        this.title = title;
-        this.price = price;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this._id = id ? new mongodb.ObjectId(id) : null; //if we dont pass id to a function set to null, because new mongodb.ObjectId(id) creates valid value for if check
-        this.userId = userId;
+const Schema = mongoose.Schema;
+
+const productSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    imageUrl: {
+        type: String,
+        required: true
     }
 
-    //connect to mongodb and save new product or edit them
-    save() {
-        const db = getDb();
-        let dbOperation;
-        if (this._id) {
-            dbOperation = db
-                .collection('products')
-                .updateOne({ _id: this._id }, { $set: this });
-        } else {
-            dbOperation = db.collection('products').insertOne(this);
-        }
-        //connect to product collection
-        return dbOperation
-            .then(result => {
-                console.log(result);
-            })
-            .catch(err => console.log(err));
-    }
+});
 
-    static fetchAll() {
-        const db = getDb();
-        return db
-            .collection('products')
-            .find()
-            .toArray()
-            .then(products => {
-                console.log(products);
-                return products;
-            })
-            .catch(err => console.log(err));
-    }
+module.exports = mongoose.model('Product', productSchema);
 
-    static findById(prodId) {
-        const db = getDb();
-        return db
-            .collection('products')
-            // .find({ _id: prodId }) //this wont work because _id: ObjectId("id") we need to parse
-            .find({ _id: new mongodb.ObjectId(prodId) })
-            .next()
-            .then(product => {
-                console.log(product, 'product');
-                return product;
-            })
-            .catch(err => console.log(err));
-    }
 
-    static deleteById(prodId) {
-        const db = getDb();
-        return db
-            .collection('products')
-            .deleteOne({ _id: new mongodb.ObjectId(prodId) })
-            .then(result => {
-                console.log('deleted');
-            })
-            .catch(err => console.log(err));
-    }
-}
+//METHODS WITH MongoDB
+// |  |  |  |  |
+// V  V  V  V  V
+// const getDb = require('../util/database').getDb;
+// const mongodb = require('mongodb');
+
+// class Product {
+//     constructor(title, price, description, imageUrl, id, userId) {
+//         this.title = title;
+//         this.price = price;
+//         this.description = description;
+//         this.imageUrl = imageUrl;
+//         this._id = id ? new mongodb.ObjectId(id) : null; //if we dont pass id to a function set to null, because new mongodb.ObjectId(id) creates valid value for if check
+//         this.userId = userId;
+//     }
+
+//     //connect to mongodb and save new product or edit them
+//     save() {
+//         const db = getDb();
+//         let dbOperation;
+//         if (this._id) {
+//             dbOperation = db
+//                 .collection('products')
+//                 .updateOne({ _id: this._id }, { $set: this });
+//         } else {
+//             dbOperation = db.collection('products').insertOne(this);
+//         }
+//         //connect to product collection
+//         return dbOperation
+//             .then(result => {
+//                 console.log(result);
+//             })
+//             .catch(err => console.log(err));
+//     }
+
+//     static fetchAll() {
+//         const db = getDb();
+//         return db
+//             .collection('products')
+//             .find()
+//             .toArray()
+//             .then(products => {
+//                 console.log(products);
+//                 return products;
+//             })
+//             .catch(err => console.log(err));
+//     }
+
+//     static findById(prodId) {
+//         const db = getDb();
+//         return db
+//             .collection('products')
+//             // .find({ _id: prodId }) //this wont work because _id: ObjectId("id") we need to parse
+//             .find({ _id: new mongodb.ObjectId(prodId) })
+//             .next()
+//             .then(product => {
+//                 console.log(product, 'product');
+//                 return product;
+//             })
+//             .catch(err => console.log(err));
+//     }
+
+//     static deleteById(prodId) {
+//         const db = getDb();
+//         return db
+//             .collection('products')
+//             .deleteOne({ _id: new mongodb.ObjectId(prodId) })
+//             .then(result => {
+//                 console.log('deleted');
+//             })
+//             .catch(err => console.log(err));
+//     }
+// }
 
 //SEQUEL
 // const Sequelize = require('sequelize');
@@ -94,7 +124,7 @@ class Product {
 //     }
 // });
 
-module.exports = Product;
+// module.exports = Product;
 
 
 

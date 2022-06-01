@@ -1,8 +1,8 @@
 const Product = require('../models/product');
-const mongodb = require('mongodb');
+// const mongodb = require('mongodb');
 
 
-const ObjectId = mongodb.ObjectId;
+// const ObjectId = mongodb.ObjectId;
 
 exports.getAddProduct = (req, res, next) => {
     // res.sendFile(path.join(rootDir, 'views', 'add-product.html'));
@@ -14,7 +14,6 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-    // products.push({ title: req.body.title }); //add product to our list
     const title = req.body.title;
     const imageUrl = req.body.imageUrl;
     const price = req.body.price;
@@ -24,12 +23,13 @@ exports.postAddProduct = (req, res, next) => {
         price: price,
         description: description,
         imageUrl: imageUrl,
-
+        userId: req.user
     });
-    product.save() //save() is from mongoose
+    product
+        .save()
         .then(result => {
             // console.log(result);
-            console.log('Created Product!');
+            console.log('Created Product');
             res.redirect('/admin/products');
         })
         .catch(err => {
@@ -61,7 +61,10 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
     Product.find()
+        // .select('title price -_id')
+        // .populate('userId', 'name')
         .then(products => {
+            // console.log(products);
             res.render('admin/products', {
                 prods: products,
                 pageTitle: 'Admin Products',

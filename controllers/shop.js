@@ -47,6 +47,46 @@ exports.getIndex = (req, res, next) => {
         );
 };
 
+exports.postCart = (req, res, next) => {
+    const prodId = req.body.productId;
+    Product.findById(prodId)
+        .then(product => {
+            return req.user.addToCart(product);
+        })
+        .then(result => {
+            console.log(result);
+            res.redirect('/cart');
+        })
+        .catch(err =>
+            console.log(err)
+        );
+};
+
+exports.getCart = (req, res, next) => {
+    // console.log(req.user.cart); //we cant load cart like this
+    req.user
+        .populate('cart.items.productId')
+        // .execPopulate()
+        .then(user => {
+            // console.log(user.cart.items);
+            const products = user.cart.items;
+            res.render('shop/cart', {
+                path: '/cart',
+                pageTitle: 'Your Cart',
+                products: products
+            });
+        })
+};
+
+exports.postCartDeleteProduct = (req, res, next) => {
+    const prodId = req.body.productId;
+
+    req.user.removeFromCart(prodId)
+        .then(result => {
+            res.redirect('/cart');
+        })
+        .catch(err => console.log(err));
+};
 
 //MongoDB
 // exports.getProducts = (req, res, next) => {

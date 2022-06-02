@@ -7,7 +7,7 @@ exports.getLogin = (req, res, next) => {
         path: '/login',
         isAuthenticated: false
     });
-}
+};
 
 exports.postLogin = (req, res, next) => {
     User.findById("62977087d6a498b26e977c08")
@@ -19,4 +19,11 @@ exports.postLogin = (req, res, next) => {
         .catch(err => {
             console.log(err);
         });
-}
+};
+
+exports.postLogout = (req, res, next) => {
+    req.session.destroy(err => {
+        console.log(err);
+        res.redirect('/')
+    });
+};

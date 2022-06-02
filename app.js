@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const errorController = require('./controllers/error');
 const mongoose = require('mongoose');
+const session = require('express-session');
 // const expressHbs = require('express-handlebars');
 // const mongoConnect = require('./util/database').mongoConnect;
 const User = require('./models/user');
@@ -48,8 +49,10 @@ const authRoutes = require('./routes/auth');
 //     console.log(err);
 // });
 
+//MIDDLEWARE
 app.use(bodyParser.urlencoded({ extended: false })); //parse only from forms
 app.use(express.static(path.join(__dirname, 'public'))); //helps us for generate css
+app.use(session({ secret: 'my secret', resave: false, saveUninitialized: false }))
 
 //SEQUEL
 

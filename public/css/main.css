@@ -35,11 +35,14 @@ form {
     height: 3.5rem;
     background-color: #00695c;
     padding: 0 1.5rem;
+    align-items: center;
 }
 
 .main-header__nav {
     height: 100%;
+    width: 100%;
     display: flex;
+    justify-content: space-between;
     align-items: center;
 }
 

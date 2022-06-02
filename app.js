@@ -37,6 +37,7 @@ app.set('views', 'views'); // fist views is name of folder
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 
 //TEST CODE FOR MYSQL
 // db.execute('SELECT * FROM products')
@@ -113,6 +114,7 @@ app.use((req, res, next) => {
 //ROUTES
 app.use('/admin', adminRoutes); //this is from export in admins.js
 app.use(shopRoutes);
+app.use(authRoutes);
 app.use(errorController.get404);
 
 mongoose.connect('mongodb+srv://antoanpetrov1:antoanpetrov1@cluster0.sxj1res.mongodb.net/shop?retryWrites=true&w=majority')

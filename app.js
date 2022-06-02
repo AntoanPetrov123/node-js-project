@@ -106,17 +106,17 @@ app.use(session({ secret: 'my secret', resave: false, saveUninitialized: false, 
 
 // mongoConnect(() => {
 //     app.listen(3000);
+// // });
+// app.use((req, res, next) => {
+//     User.findById("62977087d6a498b26e977c08")
+//         .then(user => {
+//             req.user = user;
+//             next();
+//         })
+//         .catch(err => {
+//             console.log(err);
+//         });
 // });
-app.use((req, res, next) => {
-    User.findById("62977087d6a498b26e977c08")
-        .then(user => {
-            req.user = user;
-            next();
-        })
-        .catch(err => {
-            console.log(err);
-        });
-});
 
 //ROUTES
 app.use('/admin', adminRoutes); //this is from export in admins.js

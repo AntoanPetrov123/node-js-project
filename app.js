@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const errorController = require('./controllers/error');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const MongoDBSessionStore = require('connect-mongodb-session')(session);
 // const expressHbs = require('express-handlebars');
 // const mongoConnect = require('./util/database').mongoConnect;
 const User = require('./models/user');
@@ -19,9 +20,13 @@ const User = require('./models/user');
 // const Order = require('./models/order');
 // const OrderItem = require('./models/order-items');
 
-
+const MONGODB_URI = 'mongodb+srv://antoanpetrov1:antoanpetrov1@cluster0.sxj1res.mongodb.net/shop?retryWrites=true&w=majority';
 
 const app = express();
+const store = new MongoDBSessionStore({
+    uri: MONGODB_URI,
+    collection: 'sessions'
+});
 
 // app.engine('hbs',
 // expressHbs({
@@ -52,10 +57,9 @@ const authRoutes = require('./routes/auth');
 //MIDDLEWARE
 app.use(bodyParser.urlencoded({ extended: false })); //parse only from forms
 app.use(express.static(path.join(__dirname, 'public'))); //helps us for generate css
-app.use(session({ secret: 'my secret', resave: false, saveUninitialized: false }))
+app.use(session({ secret: 'my secret', resave: false, saveUninitialized: false, store: store }));
 
 //SEQUEL
-
 //relations user and products and cart
 // Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 // User.hasMany(Product);
@@ -120,7 +124,7 @@ app.use(shopRoutes);
 app.use(authRoutes);
 app.use(errorController.get404);
 
-mongoose.connect('mongodb+srv://antoanpetrov1:antoanpetrov1@cluster0.sxj1res.mongodb.net/shop?retryWrites=true&w=majority')
+mongoose.connect(MONGODB_URI)
     .then(result => {
         User.findOne().then(user => {
             if (!user) {

@@ -31,3 +31,16 @@ exports.postLogout = (req, res, next) => {
         res.redirect('/')
     });
 };
+
+exports.getSignup = (req, res, next) => {
+    // const isLoggedIn = req.get('Cookie').split('=')[1] === 'true';
+    res.render('auth/signup', {
+        pageTitle: 'Signup',
+        path: '/signup',
+        isAuthenticated: false
+    });
+};
+
+exports.postSignup = (req, res, next) => {
+
+}

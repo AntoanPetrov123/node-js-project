@@ -1,7 +1,18 @@
 const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
 
 const User = require('../models/user');
 
+
+const transport = nodemailer.createTransport({
+    host: "smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+        user: "aa105b065e4674",
+        pass: "4ed8993b4330cc"
+    }
+});
 exports.getLogin = (req, res, next) => {
     // const isLoggedIn = req.get('Cookie').split('=')[1] === 'true';
     let message = req.flash('error');
@@ -86,6 +97,14 @@ exports.postSignup = (req, res, next) => {
                 })
                 .then(result => {
                     res.redirect('/login');
+                    transport.sendMail({
+                        to: email,
+                        from: 'antoan@node-project.com',
+                        subject: 'Signedup succeeded!',
+                        html: '<h1>You successfully signed up!</h1>'
+                    }).catch(err => {
+                        console.log(err);
+                    });
                 });
         })
         .catch(err => {

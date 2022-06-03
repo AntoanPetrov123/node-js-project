@@ -40,13 +40,6 @@ exports.postLogin = (req, res, next) => {
         });
 };
 
-exports.postLogout = (req, res, next) => {
-    req.session.destroy(err => {
-        console.log(err);
-        res.redirect('/')
-    });
-};
-
 exports.getSignup = (req, res, next) => {
     // const isLoggedIn = req.get('Cookie').split('=')[1] === 'true';
     res.render('auth/signup', {
@@ -84,3 +77,11 @@ exports.postSignup = (req, res, next) => {
             console.log(err);
         });;
 }
+
+
+exports.postLogout = (req, res, next) => {
+    req.session.destroy(err => {
+        console.log(err);
+        res.redirect('/')
+    });
+};

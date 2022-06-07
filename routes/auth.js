@@ -25,6 +25,9 @@ router.post(
         .withMessage('Incorrect email!')
 
         .custom((value, { req }) => {
+            if (value === '') {
+                return Promise.reject('Please enter email!');
+            }
             return User.findOne({ email: value }) //chek if we already have user with this email
                 .then(userDoc => {
                     if (userDoc) {

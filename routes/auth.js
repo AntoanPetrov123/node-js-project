@@ -8,7 +8,14 @@ const router = express.Router();
 
 
 router.get('/login', authController.getLogin);
-router.post('/login', authController.postLogin);
+router.post('/login', [
+    check('email')
+    .isEmail()
+    .withMessage('Incorrect email!'),
+    body('password', 'Incorrect password or email!')
+    .isLength({ min: 5 })
+    .isAlphanumeric()
+], authController.postLogin);
 router.post('/logout', authController.postLogout);
 router.get('/signup', authController.getSignup);
 router.post(
@@ -16,6 +23,7 @@ router.post(
         check('email')
         .isEmail()
         .withMessage('Incorrect email!')
+
         .custom((value, { req }) => {
             return User.findOne({ email: value }) //chek if we already have user with this email
                 .then(userDoc => {

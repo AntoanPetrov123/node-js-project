@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
-const sendgridTransport = require('nodemailer-sendgrid-transport');
+const { validationResult } = require('express-validator/check');
 
 const User = require('../models/user');
 
@@ -79,38 +79,38 @@ exports.postSignup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     const comfirmPassword = req.body.comfirmPassword;
+    const errors = validationResult(req);
 
-    User.findOne({ email: email }) //chek if we already have user with this email
-        .then(userDoc => {
-            if (userDoc) {
-                req.flash('error', 'Email exists already!');
-                return res.redirect('/signup');
-            }
+    if (!errors.isEmpty()) {
+        console.log(errors.array()[0].msg);
+        return res.status(422).render('auth/signup', {
+            pageTitle: 'Signup',
+            path: '/signup',
+            errorMessage: errors.array()[0].msg,
+        });
+    }
 
-            return bcrypt.hash(password, 12)
-                .then(hashedPassword => {
-                    const user = new User({
-                        email: email,
-                        password: hashedPassword,
-                        cart: { items: [] }
-                    });
-                    return user.save();
-                })
-                .then(result => {
-                    res.redirect('/login');
-                    return transport.sendMail({
-                        to: email,
-                        from: 'antoan@node-project.com',
-                        subject: 'Signedup succeeded!',
-                        html: '<h1>You successfully signed up!</h1>'
-                    });
-                }).catch(err => {
-                    console.log(err);
-                });
+
+    bcrypt.hash(password, 12)
+        .then(hashedPassword => {
+            const user = new User({
+                email: email,
+                password: hashedPassword,
+                cart: { items: [] }
+            });
+            return user.save();
         })
-        .catch(err => {
+        .then(result => {
+            res.redirect('/login');
+            return transport.sendMail({
+                to: email,
+                from: 'antoan@node-project.com',
+                subject: 'Signedup succeeded!',
+                html: '<h1>You successfully signed up!</h1>'
+            });
+        }).catch(err => {
             console.log(err);
-        });;
+        })
 };
 
 

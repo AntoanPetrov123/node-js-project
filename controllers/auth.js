@@ -26,6 +26,8 @@ exports.getLogin = (req, res, next) => {
         pageTitle: 'Login',
         path: '/login',
         errorMessage: message, //use key
+        oldInput: { email: [], password: [] },
+        validationErrors: []
     });
 };
 
@@ -39,6 +41,8 @@ exports.postLogin = (req, res, next) => {
             pageTitle: 'Login',
             path: '/login',
             errorMessage: 'Incorrect password or email!',
+            oldInput: { email: email, password: password },
+            validationErrors: errors.array()
         });
     }
 
@@ -46,8 +50,13 @@ exports.postLogin = (req, res, next) => {
         .then(user => {
 
             if (!user) {
-                req.flash('error', 'Invalid email or password!'); //key, message
-                return res.redirect('/login');
+                return res.status(422).render('auth/login', {
+                    pageTitle: 'Login',
+                    path: '/login',
+                    errorMessage: 'Incorrect password or email!',
+                    oldInput: { email: email, password: password },
+                    validationErrors: [{ param: 'email', param: 'password' }]
+                });
             }
             bcrypt.compare(password, user.password)
                 .then(doMatch => {
@@ -60,8 +69,13 @@ exports.postLogin = (req, res, next) => {
                             return res.redirect('/');
                         });
                     }
-                    req.flash('error', 'Invalid email or password!');
-                    res.redirect('/login');
+                    return res.status(422).render('auth/login', {
+                        pageTitle: 'Login',
+                        path: '/login',
+                        errorMessage: 'Incorrect password or email!',
+                        oldInput: { email: email, password: password },
+                        validationErrors: []
+                    });
                 })
         })
         .catch(err => {

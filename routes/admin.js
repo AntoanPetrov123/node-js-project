@@ -1,4 +1,5 @@
 const express = require('express');
+const { body } = require('express-validator/check');
 
 // const path = require('path');
 // const rootDir = require('../util/path');
@@ -14,8 +15,33 @@ router.get('/add-product', isAuth, adminController.getAddProduct); //go for addi
 router.get('/products', isAuth, adminController.getProducts);
 router.get('/edit-product/:productId', isAuth, adminController.getEditProduct); //go for editing
 // // /admin/PATH => POST
-router.post('/add-product', isAuth, adminController.postAddProduct); //add product
-router.post('/edit-product', isAuth, adminController.postEditProduct); //save edited
+router.post('/add-product', [
+    body('title')
+    .isString()
+    .isLength({ min: 3 })
+    .trim(),
+    body('imageUrl')
+    .isURL()
+    .trim(),
+    body('price')
+    .isFloat(),
+    body('description')
+    .isLength({ min: 3, max: 100 })
+    .trim(),
+], isAuth, adminController.postAddProduct); //add product
+router.post('/edit-product', [
+    body('title')
+    .isString()
+    .isLength({ min: 3 })
+    .trim(),
+    body('imageUrl')
+    .isURL(),
+    body('price')
+    .isFloat(),
+    body('description')
+    .isLength({ min: 3, max: 100 })
+    .trim(),
+], isAuth, adminController.postEditProduct); //save edited
 router.post('/delete-product', isAuth, adminController.postDeleteProduct);
 
 

@@ -15,8 +15,6 @@ router.post('/login', [
     body('password', 'Incorrect password or email!')
     .isLength({ min: 5 })
     .isAlphanumeric()
-    .trim()
-    .normalizeEmail()
 ], authController.postLogin);
 router.post('/logout', authController.postLogout);
 router.get('/signup', authController.getSignup);
@@ -27,9 +25,6 @@ router.post(
         .withMessage('Incorrect email!')
 
         .custom((value, { req }) => {
-            if (value === '') {
-                return Promise.reject('Please enter email!');
-            }
             return User.findOne({ email: value }) //chek if we already have user with this email
                 .then(userDoc => {
                     if (userDoc) {

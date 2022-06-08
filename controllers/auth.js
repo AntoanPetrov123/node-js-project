@@ -26,7 +26,7 @@ exports.getLogin = (req, res, next) => {
         pageTitle: 'Login',
         path: '/login',
         errorMessage: message, //use key
-        oldInput: { email: [], password: [] },
+        oldInput: { email: '', password: '' },
         validationErrors: []
     });
 };
@@ -55,7 +55,7 @@ exports.postLogin = (req, res, next) => {
                     path: '/login',
                     errorMessage: 'Incorrect password or email!',
                     oldInput: { email: email, password: password },
-                    validationErrors: [{ param: 'email', param: 'password' }]
+                    validationErrors: []
                 });
             }
             bcrypt.compare(password, user.password)
@@ -80,7 +80,9 @@ exports.postLogin = (req, res, next) => {
         })
         .catch(err => {
             console.log(err);
-        });
+            res.redirect('/login');
+        })
+        .catch(err => console.log(err));
 };
 
 exports.getSignup = (req, res, next) => {

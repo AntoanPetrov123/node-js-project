@@ -2,6 +2,7 @@
 const Product = require('../models/product');
 const Order = require('../models/order');
 
+
 exports.getProducts = (req, res, next) => {
     // console.log(adminData.products);//show our list of products
     // res.sendFile(path.join(rootDir, 'views', 'shop.html')); //this is for html file

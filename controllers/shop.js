@@ -2,6 +2,9 @@
 const Product = require('../models/product');
 const Order = require('../models/order');
 
+const fs = require('fs');
+const path = require('path');
+
 
 exports.getProducts = (req, res, next) => {
     // console.log(adminData.products);//show our list of products
@@ -168,6 +171,20 @@ exports.getOrders = (req, res, next) => {
                 return next(error);
             }
         );
+};
+
+exports.getInvoice = (req, res, next) => {
+    const orderId = req.params.orderId;
+    const invoiceName = 'invoice-' + orderId + '.pdf';
+    const invoicePath = path.join('data', 'invoices', invoiceName); //data folder, invoice folder and invoice name
+    fs.readFile(invoicePath, (err, data) => {
+        if (err) {
+            return next(err);
+        }
+        res.setHeader('Content-Type', 'application/pdf'); //open pdf file
+        res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"'); //attachment -> download file // inline -> open file
+        res.send(data);
+    });
 };
 
 // exports.getCheckout = (req, res, next) => {

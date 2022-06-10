@@ -175,6 +175,8 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('multer');
+
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
@@ -188,6 +190,24 @@ const store = new MongoDBStore({
     collection: 'sessions'
 });
 
+//store uploaded files
+const fileStorage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'images');
+    },
+    filename: function(req, file, cb) {
+        cb(null, new Date().getMilliseconds().toString() + '-' + file.originalname);
+    }
+});
+
+const fileFilter = (req, file, callback) => {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+        callback(null, true);
+    } else {
+        callback(null, false);
+    }
+};
+
 //MIDDLEWARE
 const csrfProtection = csrf();
 
@@ -199,6 +219,10 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
 app.use(bodyParser.urlencoded({ extended: false }));
+//dest convert buffer into image path and store it in our folder
+app.use(
+    multer({ storage: fileStorage, fileFilter: fileFilter }).single('image')
+); //this chek for specific type (file) with name="image"
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
     session({
@@ -251,8 +275,7 @@ app.use((error, req, res, next) => {
             path: '/500',
             isAuthenticated: req.session.isLoggedIn
         });
-
-})
+});
 
 mongoose
     .connect(MONGODB_URI)
